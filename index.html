@@ -14,60 +14,29 @@
     background: #000; border: 3px solid #333; border-radius: 12px;
     padding: 24px 12px; margin: 8px auto; max-width: 400px;
   }
-  /* 🔠 BIG fare display */
   #fare {
-    font-size: 6.5em;
-    font-weight: 900;
-    color: #4f4;
-    line-height: 1.1;
-    text-shadow: 0 0 20px rgba(51, 255, 51, 0.5);
-    letter-spacing: 2px;
+    font-size: 6.5em; font-weight: 900; color: #4f4; line-height: 1.1;
+    text-shadow: 0 0 20px rgba(51, 255, 51, 0.5); letter-spacing: 2px;
     transition: color 0.3s, text-shadow 0.3s;
   }
-  /* ✨ Fare flash animations */
-  #fare.increased {
-    color: #ffdd00;
-    text-shadow: 0 0 30px rgba(255, 221, 0, 0.9);
-    animation: pulse 0.6s ease-in-out 2;
-  }
-  #fare.decreased {
-    color: #4fc3ff;
-    text-shadow: 0 0 30px rgba(79, 195, 255, 0.9);
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-  }
-
+  #fare.increased { color: #ffdd00; text-shadow: 0 0 30px rgba(255, 221, 0, 0.9); animation: pulse 0.6s ease-in-out 2; }
+  #fare.decreased { color: #4fc3ff; text-shadow: 0 0 30px rgba(79, 195, 255, 0.9); }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
   #fareBreakdown { color: #999; font-size: 0.85em; min-height: 1.2em; margin-top: 4px; }
   #distance { font-size: 1.8em; color: #8cf; }
   #speed { font-size: 1.3em; color: #fa4; }
   .info { color: #888; font-size: 0.8em; margin-top: 4px; }
-  button {
-    font-size: 1.1em; padding: 12px 20px; margin: 5px; border: none;
-    border-radius: 10px; cursor: pointer; color: #fff;
-  }
-  #start { background: #2a2; }
-  #stop { background: #c33; }
-  #reset { background: #555; }
+  button { font-size: 1.1em; padding: 12px 20px; margin: 5px; border: none; border-radius: 10px; cursor: pointer; color: #fff; }
+  #start { background: #2a2; } #stop { background: #c33; } #reset { background: #555; }
   .pax { background: #26a; font-size: 1.2em; padding: 10px 16px; }
-  .disc { background: #7a5; }
-  .disc.on { background: #3a3; box-shadow: 0 0 8px #3a3; }
+  .disc { background: #7a5; } .disc.on { background: #3a3; box-shadow: 0 0 8px #3a3; }
   .status { color: #aaa; font-size: 0.9em; min-height: 1.4em; margin: 6px 0; }
   .locked { color: #f80 !important; }
-
-  /* Fare matrix table */
   table { margin: 8px auto; border-collapse: collapse; font-size: 0.85em; }
   td, th { border: 1px solid #444; padding: 4px 10px; }
-  th { background: #222; color: #fc3; }
-  td { color: #eee; }
+  th { background: #222; color: #fc3; } td { color: #eee; }
   .activeRow { background: #2a2a00; color: #ff4; font-weight: bold; }
-
-  /* Dispute log */
-  #tripLogDisplay {
-    text-align: left; font-size: 0.8em; color: #aaa;
-    max-height: 150px; overflow-y: auto;
-  }
+  #tripLogDisplay { text-align: left; font-size: 0.8em; color: #aaa; max-height: 150px; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -75,7 +44,6 @@
 <h2>🛺 Zamboanga Fare Meter</h2>
 <div class="info">Ordinance 617 — Fare Matrix</div>
 
-<!-- MAIN FARE DISPLAY -->
 <div class="screen">
   <div id="fare">₱0.00</div>
   <div id="fareBreakdown"></div>
@@ -85,14 +53,12 @@
   <div class="info" id="pointsInfo">Points: 0</div>
 </div>
 
-<!-- PASSENGER COUNTER -->
 <div>
   <button class="pax" id="paxMinus">➖</button>
   <span id="paxDisplay">Passengers: 1</span>
   <button class="pax" id="paxPlus">➕</button>
 </div>
 
-<!-- DISCOUNTS -->
 <div>
   <button class="disc" id="discSenior">👴 Senior</button>
   <button class="disc" id="discStudent">🎒 Student</button>
@@ -105,7 +71,6 @@
 <button id="stop">⏹ END</button>
 <button id="reset">↺ RESET</button>
 
-<!-- DISPUTE LOG -->
 <div class="screen">
   <div class="info" style="color:#fa4">⚖️ Dispute Log (Current Trip)</div>
   <div id="tripLogDisplay">No fare changes yet.</div>
@@ -113,33 +78,23 @@
   <button id="viewHistoryBtn" style="background:#555;">📂 Export All History</button>
 </div>
 
-<!-- FARE MATRIX -->
 <div class="screen">
   <div class="info" style="color:#fc3">📋 Official Fare Matrix (Ordinance 617)</div>
   <table id="matrixTable"></table>
 </div>
 
 <script>
-// ==================== OFFICIAL FARE MATRIX (Ordinance 617) ====================
+// ==================== CONFIGURATION ====================
 const FARE_MATRIX = [
-  { km: 1, fare: 35 },
-  { km: 2, fare: 45 },
-  { km: 3, fare: 55 },
-  { km: 4, fare: 65 },
-  { km: 5, fare: 75 },
-  { km: 6, fare: 85 },
-  { km: 7, fare: 95 },
-  { km: 8, fare: 105 },
-  { km: 9, fare: 115 },
-  { km: 10, fare: 125 },
+  { km: 1, fare: 35 }, { km: 2, fare: 45 }, { km: 3, fare: 55 }, { km: 4, fare: 65 },
+  { km: 5, fare: 75 }, { km: 6, fare: 85 }, { km: 7, fare: 95 }, { km: 8, fare: 105 },
+  { km: 9, fare: 115 }, { km: 10, fare: 125 },
 ];
 const PAX_BASE_INCLUDED = 2;
 const PAX_RATE = 10;
 const DISCOUNT_RATE = 0.20;
 const CURRENCY = "₱";
 
-// ==================== GPS SETTINGS ====================
-// Inadjust para mas mag-match sa physical odometer ng motor
 const MIN_ACCURACY = 25; 
 const MOVEMENT_THRESHOLD = 5;
 const CURRENT_STATE_KEY = "faremeter_active_trip";
@@ -153,27 +108,43 @@ let tripStarted = false;
 let passengers = 1;
 let discounts = { senior: false, student: false, pwd: false };
 let lastFare = 0;
-
-// Log / history state
 let tripLog = [];
 let tripHistory = [];
 let tripStartTime = null;
 
+// ==================== ACCELEROMETER STATE ====================
+let isMovingPhysically = true; 
+let accelHistory = [];
+const ACCEL_WINDOW = 15; 
+const ACCEL_THRESHOLD = 0.4; 
+
 const el = id => document.getElementById(id);
 
-// ==================== AUTO-SAVE / RESUME LOGIC ====================
+// ==================== MOTION SENSOR INIT ====================
+function startMotionSensors() {
+  if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', (event) => {
+      let accel = event.acceleration; 
+      if (!accel || accel.x === null) return; 
+
+      accelHistory.push({ x: accel.x, y: accel.y, z: accel.z });
+      if (accelHistory.length > ACCEL_WINDOW) accelHistory.shift();
+
+      let avgX = 0, avgY = 0, avgZ = 0;
+      for (let val of accelHistory) { avgX += val.x; avgY += val.y; avgZ += val.z; }
+      avgX /= accelHistory.length; avgY /= accelHistory.length; avgZ /= accelHistory.length;
+
+      let magnitude = Math.sqrt(avgX*avgX + avgY*avgY + avgZ*avgZ);
+      isMovingPhysically = magnitude > ACCEL_THRESHOLD;
+    });
+  }
+}
+startMotionSensors();
+
+// ==================== AUTO-SAVE / RESUME ====================
 function saveCurrentTripState() {
   if (!tripStarted) return;
-  const state = {
-    tripStarted,
-    tripStartTime: tripStartTime ? tripStartTime.toString() : null,
-    movingDistance,
-    lastFare,
-    passengers,
-    discounts,
-    lastPoint,
-    tripLog
-  };
+  const state = { tripStarted, tripStartTime: tripStartTime ? tripStartTime.toString() : null, movingDistance, lastFare, passengers, discounts, lastPoint, tripLog };
   localStorage.setItem(CURRENT_STATE_KEY, JSON.stringify(state));
 }
 
@@ -192,40 +163,25 @@ function restoreCurrentTripState() {
         lastPoint = state.lastPoint || null;
         tripLog = state.tripLog || [];
 
-        // Restore UI states
         el("paxDisplay").textContent = "Passengers: " + passengers;
         el("discSenior").classList.toggle("on", discounts.senior);
         el("discStudent").classList.toggle("on", discounts.student);
         el("discPwd").classList.toggle("on", discounts.pwd);
 
-        updateDisplay();
-        updateLogDisplay();
+        updateDisplay(); updateLogDisplay();
         setStatus("Active trip resumed from background", false);
       }
     }
-  } catch(e) {
-    console.error("Failed to restore trip state", e);
-  }
+  } catch(e) {}
 }
-
-function clearCurrentTripState() {
-  localStorage.removeItem(CURRENT_STATE_KEY);
-}
+function clearCurrentTripState() { localStorage.removeItem(CURRENT_STATE_KEY); }
 
 // ==================== FARE ENGINE ====================
 function distanceToFare(dist) {
   if (dist <= 1000) return FARE_MATRIX[0].fare;
-  
-  // Computin ang sobrang metro
   const extraMeters = dist - 1000;
-  
-  // Kada 100 meters ay ₱1.00 ang dagdag (₱10 per km divided by 10)
   const extraFare = Math.floor(extraMeters / 100) * 1; 
-  
-  // Idagdag sa base fare (Unlimited distance na ito)
-  let totalFare = FARE_MATRIX[0].fare + extraFare;
-  
-  return totalFare;
+  return FARE_MATRIX[0].fare + extraFare;
 }
 
 function calculateFare(dist) {
@@ -233,18 +189,10 @@ function calculateFare(dist) {
   const extraPax = Math.max(0, passengers - PAX_BASE_INCLUDED);
   fare += extraPax * PAX_RATE;
 
-  const discountedCount =
-    (discounts.senior ? 1 : 0) +
-    (discounts.student ? 1 : 0) +
-    (discounts.pwd ? 1 : 0);
-
+  const discountedCount = (discounts.senior ? 1 : 0) + (discounts.student ? 1 : 0) + (discounts.pwd ? 1 : 0);
   if (discountedCount > 0) {
-    if (discountedCount >= passengers) {
-      fare = fare * (1 - DISCOUNT_RATE);
-    } else {
-      const perHead = fare / passengers;
-      fare = fare - perHead * discountedCount * DISCOUNT_RATE;
-    }
+    if (discountedCount >= passengers) { fare = fare * (1 - DISCOUNT_RATE); } 
+    else { const perHead = fare / passengers; fare = fare - perHead * discountedCount * DISCOUNT_RATE; }
   }
   return fare;
 }
@@ -259,7 +207,7 @@ function fareBreakdownText(dist) {
   return txt;
 }
 
-// ==================== FARE MATRIX TABLE UI ====================
+// ==================== UI BUILDERS ====================
 function buildMatrixTable() {
   const t = el("matrixTable");
   let html = "<tr><th>Distance</th><th>Fare</th></tr>";
@@ -271,138 +219,89 @@ function buildMatrixTable() {
 }
 
 function highlightMatrixRow(dist) {
-  FARE_MATRIX.forEach((row, i) => {
-    const tr = el("mrow" + i);
-    if (tr) tr.className = "";
-  });
+  FARE_MATRIX.forEach((row, i) => { const tr = el("mrow" + i); if (tr) tr.className = ""; });
   let idx = 0;
-  if (dist > 1000) {
-    idx = Math.min(Math.ceil((dist - 1000) / 1000), FARE_MATRIX.length - 1);
-  }
+  if (dist > 1000) idx = Math.min(Math.ceil((dist - 1000) / 1000), FARE_MATRIX.length - 1);
   const tr = el("mrow" + idx);
   if (tr) tr.className = "activeRow";
 }
 
-// ==================== DISPUTE LOG ====================
 function logFareChange(from, to, reason) {
-  const entry = {
-    time: new Date().toLocaleTimeString(),
-    date: new Date().toLocaleDateString(),
-    from: from,
-    to: to,
-    distance: Math.round(movingDistance),
-    reason: reason
-  };
-  tripLog.push(entry);
+  tripLog.push({ time: new Date().toLocaleTimeString(), date: new Date().toLocaleDateString(), from: from, to: to, distance: Math.round(movingDistance), reason: reason });
   updateLogDisplay();
 }
 
 function updateLogDisplay() {
   const box = el("tripLogDisplay");
-  if (tripLog.length === 0) {
-    box.innerHTML = "No fare changes yet.";
-    return;
-  }
+  if (tripLog.length === 0) { box.innerHTML = "No fare changes yet."; return; }
   box.innerHTML = tripLog.slice().reverse().map(e => {
     const arrow = e.to > e.from ? "↑" : (e.to < e.from ? "↓" : "→");
     const color = e.to > e.from ? "#ff4" : "#4fc3ff";
-    return `<div style="margin:3px 0; border-bottom:1px solid #222; padding-bottom:3px;">
-      <span style="color:${color}">${arrow} ${CURRENCY}${e.from.toFixed(2)} → ${CURRENCY}${e.to.toFixed(2)}</span>
-      <br><small>${e.time} • ${e.distance} m • ${e.reason}</small>
-    </div>`;
+    return `<div style="margin:3px 0; border-bottom:1px solid #222; padding-bottom:3px;"><span style="color:${color}">${arrow} ${CURRENCY}${e.from.toFixed(2)} → ${CURRENCY}${e.to.toFixed(2)}</span><br><small>${e.time} • ${e.distance} m • ${e.reason}</small></div>`;
   }).join("");
 }
 
-// ==================== HISTORY STORAGE (offline) ====================
+// ==================== HISTORY STORAGE ====================
 function saveHistory() {
-  try {
-    if (tripHistory.length > 50) tripHistory = tripHistory.slice(-50);
-    localStorage.setItem("faremeter_history", JSON.stringify(tripHistory));
-  } catch(e) {}
+  try { if (tripHistory.length > 50) tripHistory = tripHistory.slice(-50); localStorage.setItem("faremeter_history", JSON.stringify(tripHistory)); } catch(e) {}
 }
-
 function loadHistory() {
-  try {
-    const saved = localStorage.getItem("faremeter_history");
-    if (saved) tripHistory = JSON.parse(saved);
-  } catch(e) { tripHistory = []; }
+  try { const saved = localStorage.getItem("faremeter_history"); if (saved) tripHistory = JSON.parse(saved); } catch(e) { tripHistory = []; }
 }
-
 function exportCSV(trips, filename) {
   let csv = "Date,Start,End,Distance(m),Fare,Passengers,Discounts,FareChanges\n";
   trips.forEach(t => {
-    const changes = (t.changes || [])
-      .map(c => `${c.time}: ${c.from}->${c.to} @ ${c.distance}m`)
-      .join(" | ");
+    const changes = (t.changes || []).map(c => `${c.time}: ${c.from}->${c.to} @ ${c.distance}m`).join(" | ");
     csv += `"${t.date}","${t.startTime}","${t.endTime}",${t.distanceM},${t.fare},${t.passengers},"${t.discounts}","${changes}"\n`;
   });
-
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = `faremeter-${filename}-${Date.now()}.csv`;
-  a.click();
+  a.href = url; a.download = `faremeter-${filename}-${Date.now()}.csv`; a.click();
   URL.revokeObjectURL(url);
 }
 
-// ==================== BEEP ====================
 function beep() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    osc.frequency.value = 880; gain.gain.setValueAtTime(0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
     osc.start(); osc.stop(ctx.currentTime + 0.2);
   } catch(e) {}
 }
 
-// ==================== DISPLAY ====================
 function updateDisplay() {
   const fare = calculateFare(movingDistance);
   const fareEl = el("fare");
-
-  // ✨ Flash detection
   if (fare > lastFare && lastFare > 0) {
-    fareEl.classList.remove("decreased");
-    fareEl.classList.add("increased");
-    setTimeout(() => fareEl.classList.remove("increased"), 1300);
-    beep();
+    fareEl.classList.remove("decreased"); fareEl.classList.add("increased");
+    setTimeout(() => fareEl.classList.remove("increased"), 1300); beep();
     logFareChange(lastFare, fare, "fare increase");
   } else if (fare < lastFare && lastFare > 0) {
-    fareEl.classList.remove("increased");
-    fareEl.classList.add("decreased");
+    fareEl.classList.remove("increased"); fareEl.classList.add("decreased");
     setTimeout(() => fareEl.classList.remove("decreased"), 1300);
     logFareChange(lastFare, fare, "discount applied");
   }
   lastFare = fare;
-
   fareEl.textContent = CURRENCY + fare.toFixed(2);
-  el("fareBreakdown").textContent = tripStarted || movingDistance > 0
-    ? fareBreakdownText(movingDistance) : "";
-  el("distance").textContent = movingDistance >= 1000
-    ? (movingDistance/1000).toFixed(2) + " km"
-    : Math.round(movingDistance) + " m";
+  el("fareBreakdown").textContent = tripStarted || movingDistance > 0 ? fareBreakdownText(movingDistance) : "";
+  el("distance").textContent = movingDistance >= 1000 ? (movingDistance/1000).toFixed(2) + " km" : Math.round(movingDistance) + " m";
   el("pointsInfo").textContent = "Points: " + pointCount;
   highlightMatrixRow(movingDistance);
 }
 
 function setStatus(msg, isWarning) {
-  el("status").textContent = msg;
-  el("status").className = isWarning ? "status locked" : "status";
+  el("status").textContent = msg; el("status").className = isWarning ? "status locked" : "status";
 }
 
-// ==================== GPS ====================
+// ==================== GPS & MOTION LOGIC ====================
 function haversine(a, b) {
   const R = 6371000;
   const φ1 = a.lat * Math.PI/180, φ2 = b.lat * Math.PI/180;
-  const Δφ = (b.lat - a.lat) * Math.PI/180;
-  const Δλ = (b.lng - a.lng) * Math.PI/180;
-  const x = Math.sin(Δφ/2)**2 +
-            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2)**2;
+  const Δφ = (b.lat - a.lat) * Math.PI/180, Δλ = (b.lng - a.lng) * Math.PI/180;
+  const x = Math.sin(Δφ/2)**2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
 }
 
@@ -411,184 +310,87 @@ function onFix(pos) {
   pointCount++;
 
   if (c.accuracy > MIN_ACCURACY) {
-    setStatus(`Signal weak (±${Math.round(c.accuracy)}m), waiting…`, true);
-    return;
+    setStatus(`Signal weak (±${Math.round(c.accuracy)}m), waiting…`, true); return;
   }
 
   if (!gpsLocked) {
     gpsLocked = true;
     if(!tripStarted) setStatus("GPS locked ✓ — press START TRIP when passenger boards");
   }
-
   el("fixInfo").textContent = `GPS accuracy: ±${Math.round(c.accuracy)} m`;
-
-  if (c.speed !== null && !isNaN(c.speed)) {
-    el("speed").textContent = (c.speed * 3.6).toFixed(1) + " km/h";
-  }
+  if (c.speed !== null && !isNaN(c.speed)) { el("speed").textContent = (c.speed * 3.6).toFixed(1) + " km/h"; }
 
   const current = { lat: c.latitude, lng: c.longitude };
 
   if (lastPoint && tripStarted) {
     const d = haversine(lastPoint, current);
+    let currentSpeed = (c.speed !== null && !isNaN(c.speed)) ? (c.speed * 3.6) : 0;
+
+    // ✨ THE MAGIC GATE (Anti-Ghost Distance) ✨
+    if (currentSpeed < 3.0 && !isMovingPhysically) {
+      lastPoint = current; // Reset reference to prevent drift buildup
+      setStatus("Naka-stop: Filtering engine vibration...", false);
+      return; 
+    }
+
     if (d > MOVEMENT_THRESHOLD) {
-      movingDistance += d;
-      lastPoint = current;
-      updateDisplay();
-      saveCurrentTripState(); 
+      movingDistance += d; lastPoint = current;
+      updateDisplay(); saveCurrentTripState(); 
+      setStatus("Trip running… fare calculating", false);
     }
   } else if (!lastPoint) {
-    lastPoint = current;
-    if (tripStarted) saveCurrentTripState();
+    lastPoint = current; if (tripStarted) saveCurrentTripState();
   }
 }
 
 function onError(err) {
-  const msgs = {
-    1: "Permission denied — allow location access",
-    2: "Position unavailable — move to open area",
-    3: "GPS timeout — still searching…"
-  };
+  const msgs = { 1: "Permission denied — allow location access", 2: "Position unavailable — move to open area", 3: "GPS timeout — still searching…" };
   setStatus(msgs[err.code] || err.message, true);
 }
 
 function startGPS() {
-  if (!navigator.geolocation) {
-    setStatus("Geolocation not supported", true);
-    return;
-  }
-  navigator.geolocation.watchPosition(onFix, onError, {
-    enableHighAccuracy: true, maximumAge: 0, timeout: 10000
-  });
+  if (!navigator.geolocation) { setStatus("Geolocation not supported", true); return; }
+  navigator.geolocation.watchPosition(onFix, onError, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
 }
 
 // ==================== BUTTONS ====================
 el("start").onclick = () => {
-  tripStarted = true;
-  tripStartTime = new Date();
-  tripLog = [];
-  lastFare = 0;
-  movingDistance = 0;
-  
-  if (gpsLocked) {
-    navigator.geolocation.getCurrentPosition(p => {
-       lastPoint = { lat: p.coords.latitude, lng: p.coords.longitude };
-       saveCurrentTripState();
-    });
-  }
-
+  tripStarted = true; tripStartTime = new Date(); tripLog = []; lastFare = 0; movingDistance = 0;
+  if (gpsLocked) { navigator.geolocation.getCurrentPosition(p => { lastPoint = { lat: p.coords.latitude, lng: p.coords.longitude }; saveCurrentTripState(); }); }
   logFareChange(0, calculateFare(0), "TRIP START");
-  lastFare = calculateFare(0);
-  updateLogDisplay();
-  setStatus("Trip running… fare calculating");
-  saveCurrentTripState();
+  lastFare = calculateFare(0); updateLogDisplay(); setStatus("Trip running… fare calculating"); saveCurrentTripState();
 };
-
 el("stop").onclick = () => {
   if (!tripStarted) return;
-  tripStarted = false;
-  const fare = calculateFare(movingDistance);
-  logFareChange(lastFare, fare, "TRIP END");
-  lastFare = fare;
-
-  const trip = {
-    date: new Date().toLocaleDateString(),
-    startTime: tripStartTime ? tripStartTime.toLocaleTimeString() : "?",
-    endTime: new Date().toLocaleTimeString(),
-    distanceM: Math.round(movingDistance),
-    fare: fare.toFixed(2),
-    passengers: passengers,
-    discounts: Object.keys(discounts).filter(k => discounts[k]).join(",") || "none",
-    changes: [...tripLog]
-  };
-  tripHistory.push(trip);
-  saveHistory();
-  clearCurrentTripState(); 
-
+  tripStarted = false; const fare = calculateFare(movingDistance); logFareChange(lastFare, fare, "TRIP END"); lastFare = fare;
+  tripHistory.push({ date: new Date().toLocaleDateString(), startTime: tripStartTime ? tripStartTime.toLocaleTimeString() : "?", endTime: new Date().toLocaleTimeString(), distanceM: Math.round(movingDistance), fare: fare.toFixed(2), passengers: passengers, discounts: Object.keys(discounts).filter(k => discounts[k]).join(",") || "none", changes: [...tripLog] });
+  saveHistory(); clearCurrentTripState(); 
   setStatus(`Trip ended — Fare: ${CURRENCY}${fare.toFixed(2)} — saved to history ✓`);
 };
-
 el("reset").onclick = () => {
-  lastPoint = null; movingDistance = 0; pointCount = 0; tripStarted = false;
-  lastFare = 0; tripLog = [];
-  el("fare").textContent = CURRENCY + "0.00";
-  el("distance").textContent = "0 m";
-  el("speed").textContent = "0.0 km/h";
-  el("fareBreakdown").textContent = "";
-  el("fare").classList.remove("increased", "decreased");
-  updateLogDisplay();
-  clearCurrentTripState(); 
-  setStatus("Meter reset — ready for next trip");
-  updateDisplay();
+  lastPoint = null; movingDistance = 0; pointCount = 0; tripStarted = false; lastFare = 0; tripLog = [];
+  el("fare").textContent = CURRENCY + "0.00"; el("distance").textContent = "0 m"; el("speed").textContent = "0.0 km/h"; el("fareBreakdown").textContent = ""; el("fare").classList.remove("increased", "decreased");
+  updateLogDisplay(); clearCurrentTripState(); setStatus("Meter reset — ready for next trip"); updateDisplay();
 };
-
-el("paxPlus").onclick = () => {
-  passengers = Math.min(6, passengers + 1);
-  el("paxDisplay").textContent = "Passengers: " + passengers;
-  updateDisplay();
-  saveCurrentTripState();
-};
-el("paxMinus").onclick = () => {
-  passengers = Math.max(1, passengers - 1);
-  el("paxDisplay").textContent = "Passengers: " + passengers;
-  updateDisplay();
-  saveCurrentTripState();
-};
-
+el("paxPlus").onclick = () => { passengers = Math.min(6, passengers + 1); el("paxDisplay").textContent = "Passengers: " + passengers; updateDisplay(); saveCurrentTripState(); };
+el("paxMinus").onclick = () => { passengers = Math.max(1, passengers - 1); el("paxDisplay").textContent = "Passengers: " + passengers; updateDisplay(); saveCurrentTripState(); };
 function toggleDiscount(key) {
   discounts[key] = !discounts[key];
-  const btn = { senior: "discSenior", student: "discStudent", pwd: "discPwd" }[key];
-  el(btn).classList.toggle("on", discounts[key]);
-  updateDisplay();
-  saveCurrentTripState();
+  el({ senior: "discSenior", student: "discStudent", pwd: "discPwd" }[key]).classList.toggle("on", discounts[key]);
+  updateDisplay(); saveCurrentTripState();
 }
-el("discSenior").onclick = () => toggleDiscount("senior");
-el("discStudent").onclick = () => toggleDiscount("student");
-el("discPwd").onclick = () => toggleDiscount("pwd");
+el("discSenior").onclick = () => toggleDiscount("senior"); el("discStudent").onclick = () => toggleDiscount("student"); el("discPwd").onclick = () => toggleDiscount("pwd");
+el("exportBtn").onclick = () => { exportCSV([{ date: new Date().toLocaleDateString(), startTime: tripStartTime ? tripStartTime.toLocaleTimeString() : "?", endTime: new Date().toLocaleTimeString(), distanceM: Math.round(movingDistance), fare: calculateFare(movingDistance).toFixed(2), passengers: passengers, discounts: Object.keys(discounts).filter(k => discounts[k]).join(",") || "none", changes: tripLog }], "current-trip"); };
+el("viewHistoryBtn").onclick = () => { if (tripHistory.length === 0) { setStatus("No saved trips yet", true); return; } exportCSV(tripHistory, "all-trips"); };
 
-el("exportBtn").onclick = () => {
-  exportCSV([{
-    date: new Date().toLocaleDateString(),
-    startTime: tripStartTime ? tripStartTime.toLocaleTimeString() : "?",
-    endTime: new Date().toLocaleTimeString(),
-    distanceM: Math.round(movingDistance),
-    fare: calculateFare(movingDistance).toFixed(2),
-    passengers: passengers,
-    discounts: Object.keys(discounts).filter(k => discounts[k]).join(",") || "none",
-    changes: tripLog
-  }], "current-trip");
-};
-
-el("viewHistoryBtn").onclick = () => {
-  if (tripHistory.length === 0) {
-    setStatus("No saved trips yet", true);
-    return;
-  }
-  exportCSV(tripHistory, "all-trips");
-};
-
-// ==================== KEEP SCREEN ON ====================
+// ==================== WAKE LOCK & PWA ====================
 let wakeLock = null;
-async function requestWakeLock() {
-  try {
-    wakeLock = await navigator.wakeLock.request("screen");
-    wakeLock.addEventListener("release", () => { wakeLock = null; });
-  } catch(e) {}
-}
+async function requestWakeLock() { try { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => { wakeLock = null; }); } catch(e) {} }
 document.addEventListener("click", () => { if (!wakeLock) requestWakeLock(); });
 requestWakeLock();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").then(() => console.log("Offline ready ✓")); }
 
-// ==================== PWA REGISTRATION ====================
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js")
-    .then(() => console.log("Offline ready ✓"));
-}
-
-// ==================== INIT ====================
-buildMatrixTable();
-loadHistory();
-restoreCurrentTripState(); 
-updateLogDisplay();
-startGPS();
+buildMatrixTable(); loadHistory(); restoreCurrentTripState(); updateLogDisplay(); startGPS();
 </script>
 </body>
 </html>
