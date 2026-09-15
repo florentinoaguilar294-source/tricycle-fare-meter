@@ -1,4 +1,4 @@
-const CACHE_NAME = "faremeter-v1";
+const CACHE_NAME = "faremeter-v3";
 const ASSETS = [
   "./",
   "./index.html",
